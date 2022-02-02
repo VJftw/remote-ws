@@ -1,0 +1,31 @@
+---
+name: "Terraform: Pull Request"
+on:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  terraform_plan:
+    name: "Plan"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    concurrency: "//deployment:deployment"
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Include infrastructure
+      run: "./pleasew -p -v2 build //third_party/repo:infrastructure"
+
+    - name: Authenticate
+      uses: ./plz-out/subrepos/third_party/repo/infrastructure/.github/actions/auth
+      with:
+        role_name: ghapr-vjftw-remote-ws
+        providers: gcp
+
+    - name: "Terraform Plan: //deployment:deployment"
+      run: |-
+        ./pleasew -p -v2 run @third_party/repo/infrastructure//build/ci/github/pull_request:terraform_plan -- --please_target "//deployment:deployment"

@@ -1,0 +1,31 @@
+---
+name: "Terraform: Main"
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  terraform_apply:
+    name: "Apply"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    concurrency: "//deployment:deployment"
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    
+    - name: Include infrastructure
+      run: "./pleasew -p -v2 build //third_party/repo:infrastructure"
+
+    - name: Authenticate
+      uses: ./plz-out/subrepos/third_party/repo/infrastructure/.github/actions/auth
+      with:
+        role_name: gha-vjftw-remote-ws-main
+        providers: gcp
+
+    - name: "Terraform Apply: //deployment:deployment"
+      run: |-
+        ./pleasew -p -v2 run @third_party/repo/infrastructure//build/ci/github/branch:terraform_apply -- --please_target "//deployment:deployment"
