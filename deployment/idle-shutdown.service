@@ -1,0 +1,11 @@
+[Unit]
+Description=Idle shutdown
+After=network.target
+
+[Service]
+EnvironmentFile=-/etc/idle-shutdown
+ExecStart=/usr/local/bin/idle-shutdown
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

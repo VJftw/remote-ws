@@ -1,0 +1,11 @@
+[Unit]
+Description=Update DNS of instance
+After=network.target
+
+[Service]
+EnvironmentFile=-/var/update-gcp-dns.env
+ExecStart=/usr/local/bin/update-gcp-dns
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
