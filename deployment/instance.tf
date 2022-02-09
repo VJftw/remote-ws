@@ -1,5 +1,5 @@
 resource "google_compute_instance" "workspace" {
-  name         = "remote-ws-vjpatel-me"
+  name         = "remote-ws"
   machine_type = "n2d-standard-4"
   zone         = "europe-west2-c"
 
@@ -35,23 +35,17 @@ resource "google_compute_instance" "workspace" {
     enable_integrity_monitoring = false
   }
 
+  service_account {
+    email  = google_service_account.remote-ws.email
+    scopes = ["cloud-platform"]
+  }
+
   metadata_startup_script = <<EOF
 #!/bin/bash
 set -euo pipefail
 
-PUBLIC_IP=$(curl \
-    -H "Metadata-Flavor: Google" \
-    http://metadata/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip
-)
-
-gcloud dns record-sets update foo.bar.com. \
-    --rrdatas="$PUBLIC_IP" \
-    --type=A \
-    --ttl=60 \
-   --zone=vjp-dns
-
 cat <<EOC > /var/update-gcp-dns.env
-DOMAIN="remote-ws.vjpatel.me"
+DOMAIN="remote-ws.gcp.vjpatel.me"
 EOC
 chmod 0600 /var/update-gcp-dns.env
 chown root:root /var/update-gcp-dns.env
