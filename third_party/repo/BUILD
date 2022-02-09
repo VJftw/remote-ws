@@ -1,5 +1,5 @@
 github_repo(
     name = "infrastructure",
     repo = "VJftw/infrastructure",
-    revision = "030adfa83272314a8a8b1345d2657417de7b1f16",
+    revision = "27f2b1b9c0779f3d64927aa5e0e0baa1b5476d3a",
 )
