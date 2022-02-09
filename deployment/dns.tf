@@ -3,6 +3,15 @@ data "google_dns_managed_zone" "dns" {
   name    = "vjp-dns"
 }
 
+resource "google_project_service" "dns" {
+  provider = google-beta
+
+  service = "dns.googleapis.com"
+
+  disable_dependent_services = true
+}
+
+
 resource "google_dns_record_set" "remote-ws" {
   name = "remote-ws.${data.google_dns_managed_zone.dns.dns_name}"
   type = "A"
