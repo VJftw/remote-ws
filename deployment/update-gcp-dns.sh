@@ -37,7 +37,7 @@ while [ 1 ]; do
   printf "resolved external IP as %s\n" "${public_ip}"
 
   if [ "${current_ip}" != "${public_ip}" ]; then
-    update_record "${ZONE}" "${DOMAIN}" "${public_ip}"
+    update_record "${ZONE_NAME}" "${DOMAIN}" "${public_ip}"
     current_ip="${public_ip}"
     printf "updated %s to %s\n" "${DOMAIN}" "${current_ip}"
   fi
