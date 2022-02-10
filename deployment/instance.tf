@@ -46,6 +46,7 @@ set -euo pipefail
 
 cat <<EOC > /var/update-gcp-dns.env
 DOMAIN="remote-ws.gcp.vjpatel.me"
+ZONE_NAME="vjp-dns"
 EOC
 chmod 0600 /var/update-gcp-dns.env
 chown root:root /var/update-gcp-dns.env
