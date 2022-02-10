@@ -13,12 +13,12 @@ terraform_root(
         "update-gcp-dns.sh",
         "variables.tf",
     ],
-    var_files = [
-        "@third_party/repo/infrastructure//accounts/gcp:vjp-remote-ws_tfvars",
-    ],
     opa_data = {
         "allowlist_deleted_addresses": [
             "google_compute_instance.workspace",
         ],
     },
+    var_files = [
+        "@third_party/repo/infrastructure//accounts/gcp:vjp-remote-ws_tfvars",
+    ],
 )
