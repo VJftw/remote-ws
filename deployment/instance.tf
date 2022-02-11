@@ -46,6 +46,7 @@ set -euo pipefail
 
 cat <<EOC > /var/update-gcp-dns.env
 DOMAIN="remote-ws.gcp.vjpatel.me"
+ZONE_PROJECT="vjp-dns"
 ZONE_NAME="vjp-dns"
 EOC
 chmod 0600 /var/update-gcp-dns.env
@@ -76,7 +77,7 @@ resource "google_compute_disk" "root" {
   type  = "pd-ssd"
   zone  = "europe-west2-c"
   size  = 10
-  image = "ubuntu-2004-focal-v20211118"
+  image = "ubuntu-minimal-2004-focal-v20220203"
 }
 
 resource "google_compute_disk" "home" {

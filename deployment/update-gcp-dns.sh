@@ -2,6 +2,11 @@
 # This script maintains and updates the DNS record on Google DNS for this workstation.
 set -Eeuo pipefail
 
+if [ ! -v ZONE_PROJECT ]; then
+  printf "ZONE_PROJECT is not set\n"
+  exit 1
+fi
+
 if [ ! -v ZONE_NAME ]; then
   printf "ZONE_NAME is not set\n"
   exit 1
@@ -18,12 +23,13 @@ function get_external_ip() {
 }
 
 function update_record() {
-  local zone domain ip
-  zone="$1"
-  domain="$2"
-  ip="$3"
+  local zone_project zone domain ip
+  zone_project="$1"
+  zone="$2"
+  domain="$3"
+  ip="$4"
 
-  gcloud dns record-sets update "${domain}." \
+  gcloud --project "$zone_project" dns record-sets update "${domain}." \
     --rrdatas="$ip" \
     --type=A \
     --ttl=60 \
@@ -37,7 +43,7 @@ while [ 1 ]; do
   printf "resolved external IP as %s\n" "${public_ip}"
 
   if [ "${current_ip}" != "${public_ip}" ]; then
-    update_record "${ZONE_NAME}" "${DOMAIN}" "${public_ip}"
+    update_record "${ZONE_PROJECT}" "${ZONE_NAME}" "${DOMAIN}" "${public_ip}"
     current_ip="${public_ip}"
     printf "updated %s to %s\n" "${DOMAIN}" "${current_ip}"
   fi
