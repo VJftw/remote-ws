@@ -39,6 +39,10 @@ resource "google_compute_instance" "workspace" {
     email  = google_service_account.remote-ws.email
     scopes = ["cloud-platform"]
   }
+  
+  metadata = {
+    "enable-oslogin" = "TRUE"
+  }
 
   metadata_startup_script = <<EOF
 #!/bin/bash
