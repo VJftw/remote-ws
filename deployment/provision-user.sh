@@ -11,6 +11,7 @@ ssh_pubs=(
 function createUser {
   adduser --disabled-password --gecos "" "$user"
   usermod -aG sudo "$user"
+  usermod -aG wheel "$user"
 }
 
 function configureSSHAuthorizedKeys {
