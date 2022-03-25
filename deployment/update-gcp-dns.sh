@@ -42,7 +42,10 @@ function update_record() {
    --zone="$zone"
 }
 
-apt install -y dnsutils
+if ! command -v dig &> /dev/null; then
+  apt-get update
+  apt-get install -y dnsutils
+fi
 
 while [ 1 ]; do
   current_ip="$(get_current_ip "$DOMAIN")"

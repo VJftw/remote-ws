@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # This script provisions a user's home directory with the given SSH keys
-set -euo pipefail
+set -Eeuo pipefail
 
 user="vjftw"
 ssh_pubs=(

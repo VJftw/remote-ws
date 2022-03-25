@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # This script shuts down the machine if it has no SSH connections for over 15 minutes.
-set -euo pipefail
+set -Eeuo pipefail
 
 INITIAL_DELAY=600
 INTERVAL=900
 
 if ! command -v netstat &> /dev/null; then
+  apt-get update
   apt-get install -y net-tools
 fi
 

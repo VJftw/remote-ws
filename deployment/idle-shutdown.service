@@ -3,6 +3,8 @@ Description=Idle shutdown
 After=network.target
 
 [Service]
+Restart=on-failure
+RestartSec=5s
 EnvironmentFile=-/etc/idle-shutdown
 ExecStart=/usr/local/bin/idle-shutdown
 StandardOutput=journal

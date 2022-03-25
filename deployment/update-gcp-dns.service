@@ -3,6 +3,8 @@ Description=Update DNS of instance
 After=network.target
 
 [Service]
+Restart=on-failure
+RestartSec=5s
 EnvironmentFile=-/var/update-gcp-dns.env
 ExecStart=/usr/local/bin/update-gcp-dns
 StandardOutput=journal

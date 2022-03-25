@@ -39,14 +39,17 @@ resource "google_compute_instance" "workspace" {
     email  = google_service_account.remote-ws.email
     scopes = ["cloud-platform"]
   }
-  
+
   metadata = {
     "enable-oslogin" = "TRUE"
   }
 
   metadata_startup_script = <<EOF
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
+
+echo "${filebase64("apt-get.sh")}" | base64 -d - > /usr/local/bin/apt-get
+chmod +x /usr/local/bin/apt-get
 
 cat <<EOC > /var/update-gcp-dns.env
 DOMAIN="remote-ws.gcp.vjpatel.me"

@@ -3,6 +3,7 @@ subinclude("//build/defs:terraform")
 terraform_root(
     name = "deployment",
     srcs = [
+        "apt-get.sh",
         "dns.tf",
         "idle-shutdown.service",
         "idle-shutdown.sh",
