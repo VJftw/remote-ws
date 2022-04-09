@@ -1,5 +1,5 @@
 resource "google_compute_instance" "workspace" {
-  name         = "remote-ws"
+  name         = "vjftw-remote-ws"
   machine_type = "n2d-standard-4"
   zone         = "europe-west2-c"
 
