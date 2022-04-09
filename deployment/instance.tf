@@ -76,6 +76,10 @@ echo "${filebase64("idle-shutdown.service")}" | base64 -d - > /etc/systemd/syste
 echo "${filebase64("provision-user.sh")}" | base64 -d - > /etc/provision-user.sh
 chmod +x /etc/provision-user.sh
 /etc/provision-user.sh
+  
+echo "${filebase64("fs.sh")}" | base64 -d - > /etc/fs.sh
+chmod +x /etc/fs.sh
+/etc/fs.sh
 EOF
 }
 
