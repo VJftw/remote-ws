@@ -5,6 +5,7 @@ terraform_root(
     srcs = [
         "apt-get.sh",
         "dns.tf",
+        "fs.sh",
         "idle-shutdown.service",
         "idle-shutdown.sh",
         "instance.tf",
