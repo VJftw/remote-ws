@@ -24,8 +24,8 @@ function get_external_ip() {
 
 function get_current_ip() {
   local domain="$1"
-  
-  dig @1.1.1.1 +short "${domain}."
+
+  dig @1.1.1.1 +short "${domain}"
 }
 
 function update_record() {
@@ -35,11 +35,32 @@ function update_record() {
   domain="$3"
   ip="$4"
 
-  gcloud --project "$zone_project" dns record-sets update "${domain}." \
-    --rrdatas="$ip" \
-    --type=A \
-    --ttl=60 \
-   --zone="$zone"
+  if gcloud \
+      --project "$zone_project" \
+      dns record-sets list \
+      --zone="$zone" --name="$domain" --type="A" \
+      | grep "$domain" > /dev/null; then
+
+    # record already exists, update it
+    gcloud \
+      --project "$zone_project" \
+      dns record-sets update "${domain}" \
+      --rrdatas="$ip" \
+      --type=A \
+      --ttl=60 \
+      --zone="$zone"
+
+    return
+  fi
+
+  # record does not exist, create it
+  gcloud \
+      --project "$zone_project" \
+      dns record-sets create "${domain}" \
+      --rrdatas="$ip" \
+      --type=A \
+      --ttl=60 \
+      --zone="$zone"
 }
 
 if ! command -v dig &> /dev/null; then
@@ -50,7 +71,7 @@ fi
 while [ 1 ]; do
   current_ip="$(get_current_ip "$DOMAIN")"
   printf "resolved current IP as %s\n" "${current_ip}"
-  
+
   public_ip="$(get_external_ip)"
   printf "resolved external IP as %s\n" "${public_ip}"
 

@@ -1,7 +1,9 @@
 resource "google_compute_instance" "workspace" {
-  name         = "vjftw-remote-ws"
-  machine_type = "n2d-standard-4"
-  zone         = "europe-west2-c"
+  provider = google-beta
+
+  name         = local.cleaned_fqn
+  machine_type = var.machine_type
+  zone         = var.zone
 
   scheduling {
     preemptible         = true
@@ -22,7 +24,7 @@ resource "google_compute_instance" "workspace" {
   }
 
   network_interface {
-    network = google_compute_network.workspace.self_link
+    network = var.network_self_link
 
     access_config {
       // Ephemeral IP
@@ -48,58 +50,64 @@ resource "google_compute_instance" "workspace" {
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "${filebase64("apt-get.sh")}" | base64 -d - > /usr/local/bin/apt-get
+echo "${filebase64("${path.module}/apt-get.sh")}" | base64 -d - > /usr/local/bin/apt-get
 chmod +x /usr/local/bin/apt-get
 
 cat <<EOC > /var/update-gcp-dns.env
-DOMAIN="remote-ws.gcp.vjpatel.me"
-ZONE_PROJECT="vjp-dns"
-ZONE_NAME="vjp-dns"
+ZONE_PROJECT="${data.google_project.project.project_id}"
+DOMAIN="${var.username}.${var.hosted_zone_dns_name}"
+ZONE_NAME="${var.hosted_zone_name}"
 EOC
 chmod 0600 /var/update-gcp-dns.env
 chown root:root /var/update-gcp-dns.env
 
-echo "${filebase64("update-gcp-dns.sh")}" | base64 -d - > /usr/local/bin/update-gcp-dns
+echo "${filebase64("${path.module}/update-gcp-dns.sh")}" | base64 -d - > /usr/local/bin/update-gcp-dns
 chmod +x /usr/local/bin/update-gcp-dns
-echo "${filebase64("update-gcp-dns.service")}" | base64 -d - > /etc/systemd/system/update-gcp-dns.service
+echo "${filebase64("${path.module}/update-gcp-dns.service")}" | base64 -d - > /etc/systemd/system/update-gcp-dns.service
 /usr/bin/systemctl daemon-reload
 /usr/bin/systemctl enable update-gcp-dns
 /usr/bin/systemctl start update-gcp-dns
 
-echo "${filebase64("idle-shutdown.sh")}" | base64 -d - > /usr/local/bin/idle-shutdown
+echo "${filebase64("${path.module}/idle-shutdown.sh")}" | base64 -d - > /usr/local/bin/idle-shutdown
 chmod +x /usr/local/bin/idle-shutdown
-echo "${filebase64("idle-shutdown.service")}" | base64 -d - > /etc/systemd/system/idle-shutdown.service
+echo "${filebase64("${path.module}/idle-shutdown.service")}" | base64 -d - > /etc/systemd/system/idle-shutdown.service
 /usr/bin/systemctl daemon-reload
 /usr/bin/systemctl enable idle-shutdown
 /usr/bin/systemctl start idle-shutdown
 
-echo "${filebase64("provision-user.sh")}" | base64 -d - > /etc/provision-user.sh
+echo "${filebase64("${path.module}/provision-user.sh")}" | base64 -d - > /etc/provision-user.sh
 chmod +x /etc/provision-user.sh
-/etc/provision-user.sh
-  
-echo "${filebase64("fs.sh")}" | base64 -d - > /etc/fs.sh
+/etc/provision-user.sh "${var.username}" "${base64encode(join("\n", var.ssh_public_keys))}"
+
+echo "${filebase64("${path.module}/fs.sh")}" | base64 -d - > /etc/fs.sh
 chmod +x /etc/fs.sh
 /etc/fs.sh
 EOF
 }
 
 resource "google_compute_disk" "root" {
-  name  = "remote-ws-vjpatel-me-root"
+  provider = google-beta
+
+  name  = "${local.cleaned_fqn}-root"
   type  = "pd-ssd"
-  zone  = "europe-west2-c"
+  zone  = var.zone
   size  = 10
   image = "ubuntu-minimal-2004-focal-v20220203"
 }
 
 resource "google_compute_disk" "home" {
-  name = "remote-ws-vjpatel-me-home"
+  provider = google-beta
+
+  name = "${local.cleaned_fqn}-home"
   type = "pd-balanced"
-  zone = "europe-west2-c"
+  zone = var.zone
   size = 80
 }
 
 resource "google_compute_resource_policy" "workspace" {
-  name   = "workspace"
+  provider = google-beta
+
+  name   = local.cleaned_fqn
   region = "europe-west2"
   snapshot_schedule_policy {
     schedule {
@@ -113,22 +121,4 @@ resource "google_compute_resource_policy" "workspace" {
       on_source_disk_delete = "KEEP_AUTO_SNAPSHOTS"
     }
   }
-}
-
-resource "google_compute_network" "workspace" {
-  name         = "workspace"
-  description  = "VPC for remote workspaces"
-  routing_mode = "REGIONAL"
-}
-
-resource "google_compute_firewall" "workspace" {
-  name    = "workspace"
-  network = google_compute_network.workspace.name
-
-  allow {
-    protocol = "tcp"
-    ports    = ["22"]
-  }
-
-  source_ranges = ["0.0.0.0/0"]
 }
