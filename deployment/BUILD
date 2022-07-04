@@ -3,17 +3,12 @@ subinclude("//build/defs:terraform")
 terraform_root(
     name = "deployment",
     srcs = [
-        "apt-get.sh",
         "dns.tf",
-        "fs.sh",
-        "idle-shutdown.service",
-        "idle-shutdown.sh",
-        "instance.tf",
         "main.tf",
-        "provision-user.sh",
-        "update-gcp-dns.service",
-        "update-gcp-dns.sh",
-        "variables.tf",
+        "network.tf",
+    ],
+    modules = [
+        "//deployment/remote-ws-module:remote-ws-module",
     ],
     opa_data = {
         "allowlist_deleted_addresses": [
