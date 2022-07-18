@@ -16,6 +16,10 @@ module "vjftw" {
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP9RT6lp86XpwrC8R7jFfnm3DV+PAVNP2Rbt7YjX6tJE vj@DUMBLEDORE",
   ]
 
-  machine_type = "n2d-standard-4"
-  zone         = "europe-west2-c"
+  machine_type = "n2d-standard-8"
+  zone         = data.google_compute_zones.available[0]
+}
+
+data "google_compute_zones" "available" {
+  status = "UP
 }
