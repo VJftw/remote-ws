@@ -21,5 +21,7 @@ module "vjftw" {
 }
 
 data "google_compute_zones" "available" {
+  provider = google-beta
+  
   status = "UP"
 }
