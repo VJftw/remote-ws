@@ -17,11 +17,6 @@ module "vjftw" {
   ]
 
   machine_type = "n2d-standard-8"
-  zone         = data.google_compute_zones.available.names[0]
+  zone         = "europe-west2-c"
 }
 
-data "google_compute_zones" "available" {
-  provider = google-beta
-  
-  status = "UP"
-}
