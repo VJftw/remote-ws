@@ -17,9 +17,9 @@ module "vjftw" {
   ]
 
   machine_type = "n2d-standard-8"
-  zone         = data.google_compute_zones.available[0]
+  zone         = data.google_compute_zones.available.names[0]
 }
 
 data "google_compute_zones" "available" {
-  status = "UP
+  status = "UP"
 }
