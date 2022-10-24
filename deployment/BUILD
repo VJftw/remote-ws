@@ -12,7 +12,7 @@ terraform_root(
     ],
     opa_data = {
         "allowlist_deleted_addresses": [
-            "google_compute_instance.workspace",
+            "module.vjftw.google_compute_instance.workspace",
         ],
     },
     var_files = [
