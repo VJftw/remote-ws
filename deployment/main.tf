@@ -14,7 +14,8 @@ module "vjftw" {
   ssh_public_keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAAd2c9cCa12ozaNjeEjTShxj92oMyiwiiIQ+5buXj2D vj@SIRIUS",
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP9RT6lp86XpwrC8R7jFfnm3DV+PAVNP2Rbt7YjX6tJE vj@DUMBLEDORE",
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM4Y2QHqM1KAmXAyxtS61gSMeum27slKZCGaSXS6/LRb vj@vjpatel.me"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM4Y2QHqM1KAmXAyxtS61gSMeum27slKZCGaSXS6/LRb vj@vjpatel.me",
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINpKiXWJgTHM5vR12o8HldFQUYvYPfn6z8GhWzoQ4u/S vj@vjpatel.me",
   ]
 
   machine_type = "n2d-standard-8"
